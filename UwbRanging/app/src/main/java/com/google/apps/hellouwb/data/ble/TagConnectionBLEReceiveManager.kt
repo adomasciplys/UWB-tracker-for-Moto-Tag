@@ -59,7 +59,7 @@ class TagConnectionBLEReceiveManager @Inject constructor(
                     data.emit(Resource.Loading(message = "Connecting to device..."))
                 }
                 if(isScanning){
-                    result.device.connectGatt(context, null, gattCallBack)
+                    result.device.connectGatt(context, false, gattCallBack)
                     isScanning = false
                     bleScanner.stopScan(this)
                 }
@@ -67,10 +67,11 @@ class TagConnectionBLEReceiveManager @Inject constructor(
 
         }
     }
+
     private var currentConnectionAttempt = 1
     private var MAXIMUM_CONNECTION_ATTEMPTS = 1
 
-    private val gattCallback = object : BluetoothGattCallback(){
+    private val gattCallBack = object : BluetoothGattCallback(){
 
         override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
             if(status == BluetoothGatt.GATT_SUCCESS){
@@ -182,9 +183,9 @@ class TagConnectionBLEReceiveManager @Inject constructor(
     }
 
     private fun findCharacteristics(serviceUUID : String, characteristicsUUID: String): BluetoothGattCharacteristic?{
-        return gatt?.services.find { service ->
+        return gatt?.services?.find { service ->
             service.uuid.toString() == serviceUUID
-        }?.characteristics.find { characteristics ->
+        }?.characteristics?.find { characteristics ->
             characteristics.uuid.toString() == characteristicsUUID
         }
     }
